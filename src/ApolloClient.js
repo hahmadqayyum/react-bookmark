@@ -1,13 +1,10 @@
-import {
-  ApolloProvider,
-  HttpLink,
-  ApolloClient,
-  InMemoryCache,
-} from "@apollo/client";
+import fetch from "cross-fetch";
+import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 
 export const client = new ApolloClient({
-  cache: new InMemoryCache(),
   link: new HttpLink({
-    uri: "",
+    uri: "/.netlify/functions/bookmarks",
+    fetch,
   }),
+  cache: new InMemoryCache(),
 });
