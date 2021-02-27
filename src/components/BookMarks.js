@@ -3,17 +3,17 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
 const BookMarkQuery = gql`
-  {
+  query GetBookmarks {
     bookmark {
       id
       url
-      description
     }
   }
 `;
 const BookMark = () => {
-  const { data, error, loading } = useQuery(BookMarkQuery);
-console.log(data)
+  const { loading, error, data, refetch } = useQuery(BookMarkQuery);
+
+  console.log(data);
   if (error) {
     return <div>{error.message}</div>;
   }

@@ -1,13 +1,24 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Formik, Form, ErrorMessage, Field } from "formik";
 import * as Yup from "yup";
+import {gql, useMutation} from "@apollo/client"
+
+
+const ADD_BOOKMARK = gql`
+mutation AddBookmark($url: String!){
+  addBookmark(url: $url){
+    id
+  }
+}
+`
 
 function AddBookMark() {
   const [data, setData] = useState({
     url: "",
-    description: "",
+    // description: "",
   });
-
+  const Inputref = useRef()
+  const [addBookmark] = useMutation(ADD_BOOKMARK);
   const validationForm = Yup.object({
     url: Yup.string().required("Url is required"),
     description: Yup.string().required("description is required"),
@@ -19,16 +30,14 @@ function AddBookMark() {
       <Formik
         initialValues={{
           url: "",
-          description: "",
+          
         }}
-        onSubmit={(values) => {
-          setData({
-            ...data,
-            url: values.url,
-            description: values.description,
-          });
-          console.log(data);
-          //
+        onSubmit={async (e) => {
+          e.preventDefault();
+          if (Inputref.current.value !== "") {
+            await addBookmark({ variables: { value: Inputref.current.value } });
+            Inputref.current.value = "";
+          }
         }}
         validationSchema={validationForm}
       >
@@ -36,20 +45,20 @@ function AddBookMark() {
           <Form onSubmit={formik.handleSubmit}>
             <div>
               <label htmlFor="url">Url:</label>
-              <Field type="text" name="url" id="url" />
+              <Field type="text" name="url" id="url" ref={Inputref} />
               <ErrorMessage
                 name="url"
                 render={(msg) => <span style={{ color: "red" }}>{msg}</span>}
               />
             </div>
-            <div>
+            {/* <div>
               <label htmlFor="description">Description:</label>
               <Field type="text" name="description" id="description" />
               <ErrorMessage
                 name="description"
                 render={(msg) => <span style={{ color: "red" }}>{msg}</span>}
               />
-            </div>
+            </div> */}
             <div>
               <button type="submit">Submit</button>
             </div>

@@ -4,8 +4,8 @@ const faunadb = require("faunadb");
 
 const q = faunadb.query;
 
-const client = faunadb.Client({
-  secret: "fnAECxLziTACB807FExI1RGjXPw1oretHsy5PtxX",
+var client = faunadb.Client({
+  secret: process.env.FAUNA,
 });
 
 const typeDefs = gql`
@@ -16,6 +16,9 @@ const typeDefs = gql`
     id: ID!
     url: String!
     description: String!
+  }
+  type Mutation {
+    addBookmark(url: String!): BookMark
   }
 `;
 const resolvers = {
@@ -35,6 +38,25 @@ const resolvers = {
             description: data.description,
           };
         });
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
+  Mutation: {
+    addBookmark: async (_, { url }) => {
+      try {
+        const results = await client.query(
+          q.Create(q.Collection("bookmark"), {
+            data: {
+              url,
+            },
+          })
+        );
+        return {
+          ...results.data,
+          id: results.ref.id,
+        };
       } catch (error) {
         console.log(error);
       }
