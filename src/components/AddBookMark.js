@@ -13,10 +13,10 @@ mutation AddBookmark($url: String!){
 `
 
 function AddBookMark() {
-  const [data, setData] = useState({
-    url: "",
-    // description: "",
-  });
+  // const [data, setData] = useState({
+  //   url: "",
+  //   description: "",
+  // });
   const Inputref = useRef()
   const [addBookmark] = useMutation(ADD_BOOKMARK);
   const validationForm = Yup.object({

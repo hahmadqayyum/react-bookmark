@@ -11,7 +11,7 @@ const BookMarkQuery = gql`
   }
 `;
 const BookMark = () => {
-  const { loading, error, data, refetch } = useQuery(BookMarkQuery);
+  const { loading, error, data } = useQuery(BookMarkQuery);
 
   console.log(data);
   if (error) {
