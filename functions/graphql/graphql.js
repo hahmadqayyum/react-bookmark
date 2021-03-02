@@ -70,6 +70,7 @@ const server = new ApolloServer({
   introspection: true,
 });
 
+
 exports.handler = server.createHandler({
   cors: {
     origin: "*",

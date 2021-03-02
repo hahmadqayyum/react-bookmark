@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
+import fetch from "cross-fetch";
+
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
@@ -13,7 +15,9 @@ import {
 
 const client = new ApolloClient({
   link: new HttpLink({
-    uri: "http://localhost:3000",
+    uri:
+      "https://ahmad-bookmark-react-app.netlify.app/.netlify/functions/graphql",
+    fetch,
   }),
   cache: new InMemoryCache(),
 });
