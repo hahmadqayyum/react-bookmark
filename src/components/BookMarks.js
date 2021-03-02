@@ -1,36 +1,35 @@
 import React from "react";
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
 
-const BookMarkQuery = gql`
-  query GetBookmarks {
-    bookmark {
+import { gql, useQuery } from "@apollo/client";
+
+const GET_BookMark = gql`
+  query GetBookMark {
+    bookmarks {
       id
       url
     }
   }
 `;
-const BookMark = () => {
-  const { loading, error, data } = useQuery(BookMarkQuery);
 
+export default function BookMarks() {
+  const { loading, error, data } = useQuery(GET_BookMark);
   console.log(data);
+  if (loading) {
+    return <div>loading///</div>;
+  }
   if (error) {
     return <div>{error.message}</div>;
-  }
-  if (loading) {
-    return <div>loading//</div>;
   }
 
   return (
     <div>
-      {data.map((data) => (
-        <li key={data.id}>
-          <h2>{data.url}</h2>
-          <h3>{data.description}</h3>
-        </li>
-      ))}
+      {data.map((data) => {
+        return (
+          <ul key={data.id}>
+            <li>{data.url}</li>
+          </ul>
+        );
+      })}
     </div>
   );
-};
-
-export default BookMark;
+}

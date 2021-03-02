@@ -1,41 +1,41 @@
 const { ApolloServer, gql } = require("apollo-server-lambda");
-
 const faunadb = require("faunadb");
 
 const q = faunadb.query;
-
-var client = faunadb.Client({
-  secret: process.env.FAUNA,
+// fnAEDUmIzGACCX5xEhSC7Yc-i19DAkdh7MIePKYF
+var client = new faunadb.Client({
+  secret: "fnAEDUmIzGACCX5xEhSC7Yc-i19DAkdh7MIePKYF",
 });
 
 const typeDefs = gql`
-  type Query {
+type query {
     bookmarks: [BookMarks]!
-  }
-  type BookMarks {
+}
+type BookMarks: {
     id: ID!
     url: String!
-    description: String!
-  }
-  type Mutation {
-    addBookmark(url: String!): BookMark
-  }
+}
+type Mutation : {
+    addBookMarks(url: String!, desc: String!): BookMarks
+}
+
 `;
+
 const resolvers = {
   Query: {
-    bookmarks: async (root, args, context) => {
+    bookmarks: async (parent, args) => {
       try {
-        const result = await client.query(
+        const results = await client.query(
           q.Map(
-            q.Paginate(q.Match(q.Index("url"))),
+            q.Paginate(q.Index("url")),
             q.Lambda((x) => q.Get(x))
           )
         );
-        return result.data.map((data) => {
+        return results.data.map((data) => {
           return {
             id: data.ts,
-            url: data.url,
-            description: data.description,
+            url: data.data.url,
+            desc: data.data.desc,
           };
         });
       } catch (error) {
@@ -44,28 +44,35 @@ const resolvers = {
     },
   },
   Mutation: {
-    addBookmark: async (_, { url }) => {
+    addBookMarks: async (_, { url, desc }) => {
       try {
-        const results = await client.query(
+        var results = await client.query(
           q.Create(q.Collection("bookmark"), {
             data: {
               url,
+              desc,
             },
           })
         );
-        return {
-          ...results.data,
-          id: results.ref.id,
-        };
+        console.log("id", results.ref.id);
+        return results.ref.data;
       } catch (error) {
         console.log(error);
       }
     },
   },
 };
+
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  playground: true,
+  introspection: true,
 });
 
-exports.handler = server.createHandler();
+exports.handler = server.createHandler({
+  cors: {
+    origin: "*",
+    credentials: true,
+  },
+});

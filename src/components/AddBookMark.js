@@ -1,72 +1,55 @@
-import React, { useRef, useState } from "react";
-import { Formik, Form, ErrorMessage, Field } from "formik";
-import * as Yup from "yup";
-import {gql, useMutation} from "@apollo/client"
-
+import React, { useRef } from "react";
+import { gql, useMutation, useQuery } from "@apollo/client";
 
 const ADD_BOOKMARK = gql`
-mutation AddBookmark($url: String!){
-  addBookmark(url: $url){
-    id
+  mutation AddBookmark($url: String!, $desc: String!) {
+    addBookMarks(url: $url, desc: $desc) {
+      url
+    }
   }
-}
-`
+`;
 
-function AddBookMark() {
-  // const [data, setData] = useState({
-  //   url: "",
-  //   description: "",
-  // });
-  const Inputref = useRef()
-  const [addBookmark] = useMutation(ADD_BOOKMARK);
-  const validationForm = Yup.object({
-    url: Yup.string().required("Url is required"),
-    description: Yup.string().required("description is required"),
-  });
+const GET_BOOKMARK = gql`
+  query GetBookmark {
+    bookmarks {
+      id
+      url
+      desc
+    }
+  }
+`;
 
+export default function AddBookMark(params) {
+  const urlRef = useRef();
+  const descRef = useRef();
+  const { data, error, loading, refetch } = useQuery(GET_BOOKMARK);
+  const [addBookMarks] = useMutation(ADD_BOOKMARK);
+  console.log(data);
+
+  if (error) {
+    console.log(error.message);
+  }
+  if (loading) {
+    return <div>loading sdfjk</div>;
+  }
   return (
     <div>
-      <div>User Form</div>
-      <Formik
-        initialValues={{
-          url: "",
-          
-        }}
+      <form
         onSubmit={async (e) => {
           e.preventDefault();
-          if (Inputref.current.value !== "") {
-            await addBookmark({ variables: { value: Inputref.current.value } });
-            Inputref.current.value = "";
-          }
+          await addBookMarks({
+            variables: {
+              url: urlRef.current.value,
+              desc: descRef.current.value,
+            },
+          });
+          await refetch();
         }}
-        validationSchema={validationForm}
       >
-        {(formik) => (
-          <Form onSubmit={formik.handleSubmit}>
-            <div>
-              <label htmlFor="url">Url:</label>
-              <Field type="text" name="url" id="url" ref={Inputref} />
-              <ErrorMessage
-                name="url"
-                render={(msg) => <span style={{ color: "red" }}>{msg}</span>}
-              />
-            </div>
-            {/* <div>
-              <label htmlFor="description">Description:</label>
-              <Field type="text" name="description" id="description" />
-              <ErrorMessage
-                name="description"
-                render={(msg) => <span style={{ color: "red" }}>{msg}</span>}
-              />
-            </div> */}
-            <div>
-              <button type="submit">Submit</button>
-            </div>
-          </Form>
-        )}
-      </Formik>
+        <input ref={urlRef} />
+        <input ref={descRef} />
+        <button type="submit">submit</button>
+      </form>
     </div>
   );
 }
-
-export default AddBookMark;
