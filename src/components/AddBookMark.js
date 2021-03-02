@@ -5,6 +5,7 @@ const ADD_BOOKMARK = gql`
   mutation AddBookmark($url: String!, $desc: String!) {
     addBookMarks(url: $url, desc: $desc) {
       url
+      desc
     }
   }
 `;

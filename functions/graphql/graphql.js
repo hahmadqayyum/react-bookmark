@@ -48,7 +48,7 @@ const resolvers = {
     addBookMarks: async (_, { url, desc }) => {
       try {
         var results = await client.query(
-          q.Create(q.Collection("url"), {
+          q.Create(q.Collection("bookmark"), {
             data: {
               url,
               desc,
@@ -70,7 +70,6 @@ const server = new ApolloServer({
   playground: true,
   introspection: true,
 });
-
 
 exports.handler = server.createHandler({
   cors: {
