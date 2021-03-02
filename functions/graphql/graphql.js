@@ -14,6 +14,7 @@ type query {
 type BookMarks: {
     id: ID!
     url: String!
+    desc: String!
 }
 type Mutation : {
     addBookMarks(url: String!, desc: String!): BookMarks
@@ -47,7 +48,7 @@ const resolvers = {
     addBookMarks: async (_, { url, desc }) => {
       try {
         var results = await client.query(
-          q.Create(q.Collection("bookmark"), {
+          q.Create(q.Collection("url"), {
             data: {
               url,
               desc,
