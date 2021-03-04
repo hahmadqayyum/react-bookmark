@@ -1,26 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import fetch from "cross-fetch";
+import { client } from "./ApolloServer";
 
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-import {
-  ApolloProvider,
-  ApolloClient,
-  HttpLink,
-  InMemoryCache,
-} from "@apollo/client";
-
-const client = new ApolloClient({
-  link: new HttpLink({
-    uri:
-      "https://ahmad-bookmark-react-app.netlify.app/.netlify/functions/graphql",
-    fetch,
-  }),
-  cache: new InMemoryCache(),
-});
+import { ApolloProvider } from "@apollo/client";
 
 ReactDOM.render(
   <React.StrictMode>

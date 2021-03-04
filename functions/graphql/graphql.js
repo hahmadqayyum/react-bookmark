@@ -1,65 +1,89 @@
+// fnAEDfNq8qACDSQ_C1vLrjPW60Z5JbcSihVTI9wG
+
 const { ApolloServer, gql } = require("apollo-server-lambda");
-const faunadb = require("faunadb");
-
-const q = faunadb.query;
-
-var client = new faunadb.Client({
-  secret: "fnAEDfA1F-ACDYKDFJbaMX1TW54-am78eBgZCWmX",
-});
+const faunadb = require("faunadb"),
+  q = faunadb.query;
 
 const typeDefs = gql`
-type query {
-    bookmarks: [BookMarks]!
-}
-type BookMarks: {
+  type Query {
+    bookmark: [Bookmark!]
+  }
+  type Bookmark {
     id: ID!
     url: String!
-    desc: String!
-}
-type Mutation : {
-    addBookMarks(url: String!, desc: String!): BookMarks
-}
-
+    description: String!
+  }
+  type Mutation {
+    addBookmark(url: String!, description: String!): Bookmark
+  }
 `;
+
+const authors = [
+  {
+    id: 1,
+    url: "https://github.com/gatsbyjs/gatsby-starter-hello-world",
+    description: "this is a github gatsby official repository",
+  },
+  {
+    id: 2,
+    url: "https://github.com/gatsbyjs/gatsby-starter-hello-world",
+    description: "this is a github gatsby official repository",
+  },
+  {
+    id: 3,
+    url: "https://github.com/gatsbyjs/gatsby-starter-hello-world",
+    description: "this is a github gatsby official repository",
+  },
+];
 
 const resolvers = {
   Query: {
-    bookmarks: async (parent, args) => {
+    bookmark: async (root, args, context) => {
       try {
-        const results = await client.query(
+        var client = new faunadb.Client({
+          secret: "fnAEDfNq8qACDSQ_C1vLrjPW60Z5JbcSihVTI9wG",
+        });
+        var result = await client.query(
           q.Map(
-            q.Paginate(q.Index("url")),
+            q.Paginate(q.Match(q.Index("url"))),
             q.Lambda((x) => q.Get(x))
           )
         );
-        return results.data.map((data) => {
+        return result.data.map((d) => {
           return {
-            id: data.ts,
-            url: data.data.url,
-            desc: data.data.desc,
+            id: d.ts,
+            url: d.data.url,
+            description: d.data.descriptionription,
           };
         });
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.log("err", err);
       }
     },
   },
   Mutation: {
-    addBookMarks: async (_, { url, desc }) => {
+    addBookmark: async (_, { url, description }) => {
       try {
-        var results = await client.query(
-          q.Create(q.Collection("bookmark"), {
+        var client = new faunadb.Client({
+          secret: "fnAEDfNq8qACDSQ_C1vLrjPW60Z5JbcSihVTI9wG",
+        });
+        var result = await client.query(
+          q.Create(q.Collection("links"), {
             data: {
               url,
-              desc,
+              description,
             },
           })
         );
-        console.log("id", results.ref.id);
-        return results.ref.data;
+        console.log(
+          "Document Created and Inserted in Container: " + result.ref.id
+        );
+        return result.ref.data;
       } catch (error) {
+        console.log("Error: ");
         console.log(error);
       }
+      // console.log('url--description', url,'description',description);
     },
   },
 };
@@ -67,13 +91,6 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  playground: true,
-  introspection: true,
 });
 
-exports.handler = server.createHandler({
-  cors: {
-    origin: "*",
-    credentials: true,
-  },
-});
+exports.handler = server.createHandler();

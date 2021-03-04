@@ -1,56 +1,57 @@
-import React, { useRef } from "react";
-import { gql, useMutation, useQuery } from "@apollo/client";
+import React from "react";
+import { useQuery, useMutation } from "@apollo/client";
+import gql from "graphql-tag";
 
-const ADD_BOOKMARK = gql`
-  mutation AddBookmark($url: String!, $desc: String!) {
-    addBookMarks(url: $url, desc: $desc) {
-      url
-      desc
-    }
-  }
-`;
-
-const GET_BOOKMARK = gql`
-  query GetBookmark {
-    bookmarks {
+const BookMarksQuery = gql`
+  {
+    bookmark {
       id
       url
-      desc
+      description
     }
   }
 `;
 
-export default function AddBookMark(params) {
-  const urlRef = useRef();
-  const descRef = useRef();
-  const { data, error, loading, refetch } = useQuery(GET_BOOKMARK);
-  const [addBookMarks] = useMutation(ADD_BOOKMARK);
-  console.log(data);
+const AddBookMarkMutation = gql`
+  mutation addBookmark($url: String!, $description: String!) {
+    addBookmark(url: $url, description: $description) {
+      url
+    }
+  }
+`;
 
-  if (error) {
-    console.log(error.message);
-  }
-  if (loading) {
-    return <div>loading sdfjk</div>;
-  }
+export default function Home() {
+  const { loading, error, data } = useQuery(BookMarksQuery);
+  const [addBookmark] = useMutation(AddBookMarkMutation);
+  let textfield;
+  let description;
+  const addBookmarkSubmit = () => {
+    addBookmark({
+      variables: {
+        url: textfield.value,
+        description: description.value,
+      },
+      refetchQueries: [{ query: BookMarksQuery }],
+    });
+    console.log("textfield", textfield.value);
+    console.log("Desc", description.value);
+  };
   return (
     <div>
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          await addBookMarks({
-            variables: {
-              url: urlRef.current.value,
-              desc: descRef.current.value,
-            },
-          });
-          await refetch();
-        }}
-      >
-        <input ref={urlRef} />
-        <input ref={descRef} />
-        <button type="submit">submit</button>
-      </form>
+      <p>{JSON.stringify(data)}</p>
+      <div>
+        <input
+          type="text"
+          placeholder="URL"
+          ref={(node) => (textfield = node)}
+        />
+        <input
+          type="text"
+          placeholder="Description"
+          ref={(node) => (description = node)}
+        />
+        <button onClick={addBookmarkSubmit}>Add BookMark</button>
+      </div>
     </div>
   );
 }
