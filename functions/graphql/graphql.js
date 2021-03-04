@@ -2,9 +2,9 @@ const { ApolloServer, gql } = require("apollo-server-lambda");
 const faunadb = require("faunadb");
 
 const q = faunadb.query;
-// fnAEDUmIzGACCX5xEhSC7Yc-i19DAkdh7MIePKYF
+
 var client = new faunadb.Client({
-  secret: "fnAEDUmIzGACCX5xEhSC7Yc-i19DAkdh7MIePKYF",
+  secret: "fnAEDfA1F-ACDYKDFJbaMX1TW54-am78eBgZCWmX",
 });
 
 const typeDefs = gql`
