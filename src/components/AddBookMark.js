@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 
 const BookMarksQuery = gql`
-  {
+  query {
     bookmark {
       id
       url
@@ -21,30 +21,29 @@ const AddBookMarkMutation = gql`
 `;
 
 export default function Home() {
-  const { loading, error, data } = useQuery(BookMarksQuery);
+  const { loading, error, data, refetch } = useQuery(BookMarksQuery);
+  console.log(data);
   const [addBookmark] = useMutation(AddBookMarkMutation);
   let textfield;
   let description;
-  const addBookmarkSubmit = () => {
-    addBookmark({
+  const addBookmarkSubmit = async () => {
+    await addBookmark({
       variables: {
         url: textfield.value,
         description: description.value,
       },
-      refetchQueries: [{ query: BookMarksQuery }],
     });
-    console.log("textfield", textfield.value);
-    console.log("Desc", description.value);
+    await refetch();
+    // console.log("textfield", textfield.value);
+    // console.log("Desc", description.value);
   };
-  if (error) {
-    return(
-      <div>{error.message}</div>
-    )
-  }
+  // if (error) {
+  //   return(
+  //     <div>{error.message}</div>
+  //   )
+  // }
   if (loading) {
-    return(
-      <div>loaidng /..</div>
-    )
+    return <div>loaidng /..</div>;
   }
   return (
     <div>
