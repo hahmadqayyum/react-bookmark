@@ -1,18 +1,11 @@
 import React from "react";
 
-import { gql, useQuery } from "@apollo/client";
-
-const GET_BookMark = gql`
-  query GetBookMark {
-    bookmarks {
-      id
-      url
-    }
-  }
-`;
+import { useQuery } from "@apollo/client";
+import { BookMarksQuery } from "./AddBookMark";
 
 export default function BookMarks() {
-  const { loading, error, data } = useQuery(GET_BookMark);
+  const { loading, error, data } = useQuery(BookMarksQuery);
+
   console.log(data);
   if (loading) {
     return <div>loading///</div>;

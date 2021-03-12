@@ -2,7 +2,7 @@ import React from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import gql from "graphql-tag";
 
-const BookMarksQuery = gql`
+export const BookMarksQuery = gql`
   query {
     bookmark {
       id
@@ -21,7 +21,7 @@ const AddBookMarkMutation = gql`
 `;
 
 export default function Home() {
-  const { loading, error, data, refetch } = useQuery(BookMarksQuery);
+  const { refetch } = useQuery(BookMarksQuery);
   console.log(data);
   const [addBookmark] = useMutation(AddBookMarkMutation);
   let textfield;
@@ -37,17 +37,9 @@ export default function Home() {
     // console.log("textfield", textfield.value);
     // console.log("Desc", description.value);
   };
-  if (error) {
-    return(
-      <div>{error.message}</div>
-    )
-  }
-  if (loading) {
-    return <div>loaidng /..</div>;
-  }
+
   return (
     <div>
-      <p>{JSON.stringify(data)}</p>
       <div>
         <input
           type="text"
