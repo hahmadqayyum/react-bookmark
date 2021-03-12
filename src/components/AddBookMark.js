@@ -22,7 +22,7 @@ const AddBookMarkMutation = gql`
 
 export default function Home() {
   const { refetch } = useQuery(BookMarksQuery);
-  console.log(data);
+  // console.log(data);
   const [addBookmark] = useMutation(AddBookMarkMutation);
   let textfield;
   let description;
