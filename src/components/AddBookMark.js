@@ -37,11 +37,11 @@ export default function Home() {
     // console.log("textfield", textfield.value);
     // console.log("Desc", description.value);
   };
-  // if (error) {
-  //   return(
-  //     <div>{error.message}</div>
-  //   )
-  // }
+  if (error) {
+    return(
+      <div>{error.message}</div>
+    )
+  }
   if (loading) {
     return <div>loaidng /..</div>;
   }

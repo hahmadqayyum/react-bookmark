@@ -18,23 +18,23 @@ const typeDefs = gql`
   }
 `;
 
-const authors = [
-  {
-    id: 1,
-    url: "https://github.com/gatsbyjs/gatsby-starter-hello-world",
-    description: "this is a github gatsby official repository",
-  },
-  {
-    id: 2,
-    url: "https://github.com/gatsbyjs/gatsby-starter-hello-world",
-    description: "this is a github gatsby official repository",
-  },
-  {
-    id: 3,
-    url: "https://github.com/gatsbyjs/gatsby-starter-hello-world",
-    description: "this is a github gatsby official repository",
-  },
-];
+// const authors = [
+//   {
+//     id: 1,
+//     url: "https://github.com/gatsbyjs/gatsby-starter-hello-world",
+//     description: "this is a github gatsby official repository",
+//   },
+//   {
+//     id: 2,
+//     url: "https://github.com/gatsbyjs/gatsby-starter-hello-world",
+//     description: "this is a github gatsby official repository",
+//   },
+//   {
+//     id: 3,
+//     url: "https://github.com/gatsbyjs/gatsby-starter-hello-world",
+//     description: "this is a github gatsby official repository",
+//   },
+// ];
 
 const resolvers = {
   Query: {
